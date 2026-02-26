@@ -5,38 +5,109 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sean Carroll</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <!--
+    We load two fonts from Google Fonts:
+    - "IM Fell English": an old-style serif used for names and headings
+    - "IBM Plex Mono": a monospace font used for body text, giving a clean archival feel
+  -->
   <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet" />
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root { --bg: #f5f2ec; --ink: #1a1814; --muted: #7a7570; --rule: #c8c0b4; }
 
+    /* ─── RESET ───────────────────────────────────────────────────────────────
+       Remove all default browser spacing and make sizing consistent.
+       Every element will size itself including its padding and border.        */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ─── DESIGN TOKENS ───────────────────────────────────────────────────────
+       CSS custom properties (variables) that define the colour palette.
+       Changing these four values will retheme the whole site.
+       --bg:   page background (warm off-white)
+       --ink:  primary text colour (near-black)
+       --muted: secondary text, labels, descriptions
+       --rule: horizontal lines and subtle borders                             */
+    :root {
+      --bg:    #f5f2ec;
+      --ink:   #1a1814;
+      --muted: #7a7570;
+      --rule:  #c8c0b4;
+    }
+
+    /* ─── PAGE LAYOUT ─────────────────────────────────────────────────────────
+       The body is centred with a max-width so it reads well on wide screens.
+       Generous padding top/bottom keeps content from sitting against edges.   */
     body {
       background: var(--bg);
       color: var(--ink);
       font-family: 'IBM Plex Mono', monospace;
-      font-weight: 300;
-      min-height: 100vh;
+      font-weight: 300;        /* light weight — gives an airy, editorial feel */
+      min-height: 100vh;       /* always fill at least the full viewport height */
       padding: 4rem 2rem;
       max-width: 640px;
-      margin: 0 auto;
+      margin: 0 auto;          /* centre the column horizontally */
     }
 
+    /* ─── HEADER ──────────────────────────────────────────────────────────────
+       Sits at the top and shows the avatar image alongside the profile text.
+       Uses flexbox so the image and text sit side by side.                    */
     header {
       display: flex;
-      align-items: flex-start;
+      align-items: flex-start; /* align to top of the flex row, not the middle */
       gap: 1.8rem;
       margin-bottom: 3.5rem;
       padding-bottom: 2.5rem;
-      border-bottom: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule); /* thin line separating header from repos */
     }
-    header img { width: 68px; height: 68px; border-radius: 50%; filter: grayscale(15%); flex-shrink: 0; }
-    .info h1 { font-family: 'IM Fell English', serif; font-size: 1.75rem; font-weight: 400; line-height: 1.1; }
-    .info .handle { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.1em; margin-top: 0.3rem; }
-    .info .bio { margin-top: 1rem; font-size: 0.77rem; line-height: 1.8; max-width: 440px; }
+
+    /* ─── AVATAR IMAGE ────────────────────────────────────────────────────────
+       The GitHub profile picture. Circular crop, slight desaturation.
+       flex-shrink: 0 prevents it from squashing if the text gets long.       */
+    header img {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      filter: grayscale(15%);
+      flex-shrink: 0;
+      background: var(--rule); /* placeholder colour while the image loads */
+    }
+
+    /* ─── PROFILE NAME ────────────────────────────────────────────────────────
+       Large serif display font for the person's name.                        */
+    .info h1 {
+      font-family: 'IM Fell English', serif;
+      font-size: 1.75rem;
+      font-weight: 400;
+      line-height: 1.1;
+    }
+
+    /* ─── GITHUB HANDLE (@username) ──────────────────────────────────────────  */
+    .info .handle {
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;   /* spaced-out caps feel */
+      margin-top: 0.3rem;
+    }
+
+    /* ─── BIO ─────────────────────────────────────────────────────────────────
+       The user's GitHub bio text. Generous line-height for readability.      */
+    .info .bio {
+      margin-top: 1rem;
+      font-size: 0.77rem;
+      line-height: 1.8;
+      max-width: 440px;
+    }
+
+    /* ─── ORGANISATION LINK ───────────────────────────────────────────────────
+       Shows the user's GitHub org (e.g. @NewMediaArtClub) as a subtle link.  */
     .info .org { margin-top: 0.5rem; font-size: 0.7rem; }
-    .info .org a { color: var(--muted); text-decoration: none; border-bottom: 1px solid var(--rule); }
+    .info .org a {
+      color: var(--muted);
+      text-decoration: none;
+      border-bottom: 1px solid var(--rule); /* underline using border, not text-decoration */
+    }
     .info .org a:hover { color: var(--ink); border-color: var(--ink); }
 
+    /* ─── SECTION LABEL ───────────────────────────────────────────────────────
+       Small all-caps label above the repo list. Acts like a category heading. */
     .section-label {
       font-size: 0.65rem;
       letter-spacing: 0.2em;
@@ -45,178 +116,363 @@
       margin-bottom: 1.5rem;
     }
 
+    /* ─── REPO BLOCK ──────────────────────────────────────────────────────────
+       Each repository is a block separated by a top border rule.             */
     .repo { border-top: 1px solid var(--rule); padding: 1.4rem 0; }
-    .repo:last-child { border-bottom: 1px solid var(--rule); }
-    .repo-header { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
-    .repo-name { font-family: 'IM Fell English', serif; font-size: 1.15rem; font-weight: 400; color: var(--ink); text-decoration: none; }
+    .repo:last-child { border-bottom: 1px solid var(--rule); } /* close the final item */
+
+    /* ─── REPO HEADER ROW ─────────────────────────────────────────────────────
+       Name on the left, language tag on the right.                           */
+    .repo-header {
+      display: flex;
+      align-items: baseline;    /* align text on their baselines */
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    /* ─── REPO NAME LINK ──────────────────────────────────────────────────────
+       Clicking the name opens the repo on GitHub in a new tab.               */
+    .repo-name {
+      font-family: 'IM Fell English', serif;
+      font-size: 1.15rem;
+      font-weight: 400;
+      color: var(--ink);
+      text-decoration: none;
+    }
     .repo-name:hover { text-decoration: underline; text-underline-offset: 4px; }
-    .repo-lang { font-size: 0.65rem; color: var(--muted); letter-spacing: 0.06em; flex-shrink: 0; }
+
+    /* ─── LANGUAGE TAG ────────────────────────────────────────────────────────
+       Shows the primary language of the repo (e.g. "JavaScript").           */
+    .repo-lang {
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      flex-shrink: 0; /* don't let this get squashed by a long repo name */
+    }
+
+    /* ─── REPO DESCRIPTION ────────────────────────────────────────────────────  */
     .repo-desc { margin-top: 0.35rem; font-size: 0.74rem; color: var(--muted); line-height: 1.65; }
 
+    /* ─── FILE LIST ───────────────────────────────────────────────────────────
+       Hidden by default. Adding the class "open" makes it visible.
+       Each <li> is a file or folder inside the repo.                         */
     .file-list { margin-top: 1rem; list-style: none; display: none; }
     .file-list.open { display: block; }
-    .file-list li { display: flex; align-items: baseline; gap: 0.5rem; padding: 0.22rem 0; font-size: 0.72rem; }
+
+    .file-list li {
+      display: flex;
+      align-items: baseline;
+      gap: 0.6rem;
+      padding: 0.22rem 0;
+      font-size: 0.72rem;
+    }
+
+    /* ─── EM DASH BULLET ──────────────────────────────────────────────────────
+       Each file row gets a "—" prefix via CSS, keeping the HTML clean.       */
     .file-list li::before { content: '—'; color: var(--rule); flex-shrink: 0; }
+
+    /* ─── FILE LINK ───────────────────────────────────────────────────────────
+       Clicking a file opens it on GitHub.                                    */
     .file-list a { color: var(--ink); text-decoration: none; }
     .file-list a:hover { text-decoration: underline; text-underline-offset: 3px; }
-    .file-list .dir { color: var(--muted); }
 
-    .toggle { margin-top: 0.75rem; font-size: 0.65rem; letter-spacing: 0.08em; color: var(--muted); cursor: pointer; background: none; border: none; font-family: inherit; padding: 0; }
+    /* ─── DIRECTORY LABEL ─────────────────────────────────────────────────────
+       Folders are shown in muted italic — they aren't clickable yet.         */
+    .file-list .dir { color: var(--muted); font-style: italic; }
+
+    /* ─── TOGGLE BUTTON ───────────────────────────────────────────────────────
+       The "show files ↓" / "hide ↑" button below each repo name.
+       Styled to look like plain text, not a button.                          */
+    .toggle {
+      margin-top: 0.8rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-family: inherit; /* use the same monospace font as the rest of the page */
+      padding: 0;
+    }
     .toggle:hover { color: var(--ink); }
-    .toggle:disabled { opacity: 0.5; cursor: default; }
+    .toggle:disabled { opacity: 0.4; cursor: default; }
 
-    .msg { font-size: 0.72rem; color: var(--muted); padding: 0.5rem 0; }
-    .err { font-size: 0.72rem; color: #a33; padding: 0.5rem 0; }
+    /* ─── UTILITY TEXT CLASSES ────────────────────────────────────────────────
+       .msg — neutral status messages (e.g. "Fetching…")
+       .err — error messages shown in red when something goes wrong           */
+    .msg { font-size: 0.72rem; color: var(--muted); padding: 0.4rem 0; }
+    .err { font-size: 0.7rem; color: #a33; padding: 0.4rem 0; }
 
+    /* ─── FOOTER ──────────────────────────────────────────────────────────────  */
     footer { margin-top: 4rem; font-size: 0.62rem; color: var(--rule); letter-spacing: 0.1em; }
 
-    @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; } }
-    .fade { animation: fade 0.5s ease forwards; }
   </style>
 </head>
 <body>
 
-  <!-- Header populated by JS -->
-  <header id="hdr">
+  <!--
+    HEADER
+    ──────
+    Avatar and profile info. The image src and all text are set by JavaScript
+    after the GitHub API responds. We pre-fill the avatar with the known URL
+    and the name with "Sean Carroll" so the page doesn't look blank on load.
+  -->
+  <header>
     <img id="avatar" src="https://avatars.githubusercontent.com/u/60274196?v=4" alt="Sean Carroll" />
     <div class="info">
-      <h1 id="uname">Loading…</h1>
-      <p class="handle" id="handle"></p>
-      <p class="bio" id="bio"></p>
-      <p class="org" id="org"></p>
+      <h1 id="uname">Sean Carroll</h1>
+      <p class="handle" id="handle">@seanzshow1</p>
+      <p class="bio"    id="bio"></p>   <!-- filled by JS once API responds -->
+      <p class="org"    id="org"></p>   <!-- filled by JS once API responds -->
     </div>
   </header>
 
+  <!-- REPOSITORY LIST ──────────────────────────────────────────────────────────
+       The label is static HTML. The #repo-list div starts with a "Fetching…"
+       message which is replaced entirely by JavaScript once data arrives.    -->
   <p class="section-label">Repositories</p>
-  <div id="repo-list"><p class="msg">Fetching repositories…</p></div>
+  <div id="repo-list"><p class="msg">Fetching…</p></div>
 
   <footer>github.com/seanzshow1</footer>
 
 <script>
-const USERNAME = 'seanzshow1';
+  // ─── CONFIGURATION ───────────────────────────────────────────────────────────
+  // The GitHub username whose profile and repos we want to display.
+  // Change this one value to use the site for a different user.
+  const USERNAME = 'seanzshow1';
 
-async function apiFetch(path) {
-  const res = await fetch('https://api.github.com' + path, {
-    headers: { 'Accept': 'application/vnd.github+json' }
-  });
-  if (!res.ok) throw new Error(`GitHub API error ${res.status} on ${path}`);
-  return res.json();
-}
 
-async function loadFiles(repo, fileList, btn) {
-  btn.disabled = true;
-  btn.textContent = 'loading…';
-  try {
-    const items = await apiFetch(`/repos/${USERNAME}/${repo}/contents`);
-    items.sort((a, b) => {
-      if (a.type !== b.type) return a.type === 'dir' ? -1 : 1;
-      return a.name.localeCompare(b.name);
+  // ─── STRATEGY 1: DIRECT GITHUB API ───────────────────────────────────────────
+  // On a real hosted site (e.g. GitHub Pages), the browser can call the GitHub
+  // API directly. GitHub allows this via CORS for public data.
+  // The function takes a path like "/users/seanzshow1" and returns parsed JSON.
+  async function githubDirect(path) {
+    const res = await fetch('https://api.github.com' + path, {
+      headers: { Accept: 'application/vnd.github+json' } // tell GitHub we want JSON
     });
-    fileList.innerHTML = '';
-    items.forEach(item => {
-      const li = document.createElement('li');
-      if (item.type === 'dir') {
-        li.innerHTML = `<span class="dir">${item.name}/</span>`;
-      } else {
-        li.innerHTML = `<a href="${item.html_url}" target="_blank" rel="noopener">${item.name}</a>`;
-      }
-      fileList.appendChild(li);
-    });
-    fileList.classList.add('open');
-    btn.textContent = 'hide ↑';
-    btn.disabled = false;
-    btn.onclick = () => {
-      const isOpen = fileList.classList.toggle('open');
-      btn.textContent = isOpen ? 'hide ↑' : `files (${items.length}) ↓`;
-    };
-  } catch(e) {
-    btn.textContent = 'error loading files';
-    btn.disabled = false;
-    console.error(e);
+    // If the server returned an error status (4xx, 5xx), throw so we can catch it
+    if (!res.ok) throw new Error(res.status);
+    return res.json();
   }
-}
 
-async function init() {
-  const listEl = document.getElementById('repo-list');
 
-  try {
-    // Fetch user + repos in parallel
-    const [user, repos] = await Promise.all([
-      apiFetch(`/users/${USERNAME}`),
-      apiFetch(`/users/${USERNAME}/repos?sort=updated&per_page=100`)
-    ]);
-
-    // Fill header
-    document.getElementById('avatar').src = user.avatar_url;
-    document.getElementById('uname').textContent = user.name || user.login;
-    document.getElementById('handle').textContent = `@${user.login}`;
-    if (user.bio) document.getElementById('bio').textContent = user.bio;
-    if (user.company) {
-      const slug = user.company.replace(/^@/, '');
-      document.getElementById('org').innerHTML =
-        `<a href="https://github.com/${encodeURIComponent(slug)}" target="_blank" rel="noopener">@${slug}</a>`;
-    }
-
-    // Fill repos
-    const publicRepos = repos.filter(r => !r.private);
-    listEl.innerHTML = '';
-
-    if (!publicRepos.length) {
-      listEl.innerHTML = '<p class="msg">No public repositories.</p>';
-      return;
-    }
-
-    publicRepos.forEach(repo => {
-      const div = document.createElement('div');
-      div.className = 'repo fade';
-
-      const header = document.createElement('div');
-      header.className = 'repo-header';
-
-      const nameLink = document.createElement('a');
-      nameLink.className = 'repo-name';
-      nameLink.href = repo.html_url;
-      nameLink.target = '_blank';
-      nameLink.rel = 'noopener';
-      nameLink.textContent = repo.name;
-      header.appendChild(nameLink);
-
-      if (repo.language) {
-        const lang = document.createElement('span');
-        lang.className = 'repo-lang';
-        lang.textContent = repo.language;
-        header.appendChild(lang);
-      }
-
-      div.appendChild(header);
-
-      if (repo.description) {
-        const desc = document.createElement('p');
-        desc.className = 'repo-desc';
-        desc.textContent = repo.description;
-        div.appendChild(desc);
-      }
-
-      const fileList = document.createElement('ul');
-      fileList.className = 'file-list';
-
-      const btn = document.createElement('button');
-      btn.className = 'toggle';
-      btn.textContent = 'show files ↓';
-      btn.onclick = () => loadFiles(repo.name, fileList, btn);
-
-      div.appendChild(btn);
-      div.appendChild(fileList);
-      listEl.appendChild(div);
+  // ─── STRATEGY 2: CLAUDE AS A PROXY ───────────────────────────────────────────
+  // In sandboxed preview environments (like the Claude artifact preview), direct
+  // network requests to external sites are blocked. As a fallback, we ask the
+  // Anthropic API — which IS accessible from the sandbox — to fetch the GitHub
+  // data on our behalf and return it as JSON.
+  //
+  // This uses the Anthropic /v1/messages endpoint with the web_search tool enabled,
+  // which allows Claude to browse the web and retrieve live data.
+  async function githubViaClaude(path) {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 4000,
+        // Enable the web_search tool so Claude can fetch external URLs
+        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+        messages: [{
+          role: 'user',
+          // Ask Claude to fetch the GitHub API URL and return ONLY the JSON,
+          // with no explanation or markdown wrapping around it
+          content: `Fetch this GitHub API URL and return ONLY the raw JSON, no explanation, no markdown fences:
+https://api.github.com${path}`
+        }]
+      })
     });
 
-  } catch(e) {
-    listEl.innerHTML = `<p class="err">Error: ${e.message}</p><p class="msg" style="margin-top:0.5rem">Open the browser console for details. GitHub API allows 60 requests/hour unauthenticated.</p>`;
-    console.error(e);
-  }
-}
+    if (!res.ok) throw new Error('Claude proxy failed: ' + res.status);
 
-init();
+    const data = await res.json();
+
+    // Claude's response may contain multiple content blocks (text, tool_use, etc.)
+    // We only want the text blocks, joined together
+    const text = data.content
+      .filter(block => block.type === 'text')
+      .map(block => block.text)
+      .join('');
+
+    // Strip any accidental markdown code fences (```json ... ```) before parsing
+    const clean = text.replace(/```json|```/g, '').trim();
+
+    return JSON.parse(clean); // parse the JSON string into a real JS object
+  }
+
+
+  // ─── UNIFIED FETCH FUNCTION ───────────────────────────────────────────────────
+  // This is the function the rest of the code uses. It always tries the direct
+  // GitHub API first. If that throws (e.g. network blocked), it automatically
+  // falls back to the Claude proxy. This means the same code works both in the
+  // sandboxed preview AND on a real GitHub Pages deployment.
+  async function apiFetch(path) {
+    try {
+      return await githubDirect(path);
+    } catch (e) {
+      console.log('Direct fetch blocked, falling back to Claude proxy…', e.message);
+      return await githubViaClaude(path);
+    }
+  }
+
+
+  // ─── LOAD FILES FOR A REPO ────────────────────────────────────────────────────
+  // Called when the user clicks "show files ↓" on a repo.
+  // Fetches the contents of the repo root and renders each file as a link.
+  async function loadFiles(repoName, fileList, btn) {
+    btn.disabled = true;
+    btn.textContent = 'loading…';
+
+    try {
+      // /contents returns an array of files and folders at the root of the repo
+      const items = await apiFetch(`/repos/${USERNAME}/${repoName}/contents`);
+
+      // Sort: directories first, then files, both alphabetically
+      items.sort((a, b) => {
+        if (a.type !== b.type) return a.type === 'dir' ? -1 : 1;
+        return a.name.localeCompare(b.name);
+      });
+
+      // Clear any previous content and build the list
+      fileList.innerHTML = '';
+      items.forEach(item => {
+        const li = document.createElement('li');
+
+        if (item.type === 'dir') {
+          // Directories get a trailing slash but aren't linked (no single URL for a dir)
+          li.innerHTML = `<span class="dir">${item.name}/</span>`;
+        } else {
+          // Files link directly to their page on GitHub (html_url is the web view)
+          li.innerHTML = `<a href="${item.html_url}" target="_blank" rel="noopener">${item.name}</a>`;
+        }
+
+        fileList.appendChild(li);
+      });
+
+      // Show the list
+      fileList.classList.add('open');
+
+      // Update the button to now act as a hide toggle
+      btn.textContent = 'hide ↑';
+      btn.disabled = false;
+      btn.onclick = () => {
+        const open = fileList.classList.toggle('open');
+        btn.textContent = open ? 'hide ↑' : `files (${items.length}) ↓`;
+      };
+
+    } catch (e) {
+      // If loading files fails, show an inline message rather than crashing
+      btn.textContent = 'could not load files';
+      btn.disabled = false;
+      console.error(e);
+    }
+  }
+
+
+  // ─── MAIN INIT FUNCTION ───────────────────────────────────────────────────────
+  // Runs on page load. Fetches the user profile and repo list in parallel,
+  // then builds and inserts all the HTML into the page.
+  async function init() {
+    const listEl = document.getElementById('repo-list');
+
+    try {
+      // Run both API calls at the same time using Promise.all —
+      // faster than waiting for one to finish before starting the other
+      const [user, repos] = await Promise.all([
+        apiFetch(`/users/${USERNAME}`),
+        apiFetch(`/users/${USERNAME}/repos?sort=updated&per_page=100`)
+      ]);
+
+
+      // ── POPULATE HEADER ────────────────────────────────────────────────────────
+      document.getElementById('avatar').src = user.avatar_url;
+      document.getElementById('uname').textContent = user.name || user.login;
+      document.getElementById('handle').textContent = `@${user.login}`;
+
+      // bio and company may be null — only set them if they exist
+      if (user.bio) document.getElementById('bio').textContent = user.bio;
+      if (user.company) {
+        const slug = user.company.replace(/^@/, ''); // remove leading @ if present
+        document.getElementById('org').innerHTML =
+          `<a href="https://github.com/${slug}" target="_blank" rel="noopener">@${slug}</a>`;
+      }
+
+
+      // ── POPULATE REPO LIST ─────────────────────────────────────────────────────
+      // Filter out private repos (the API won't return them without auth anyway,
+      // but this is a safety check in case that ever changes)
+      const publicRepos = repos.filter(r => !r.private);
+
+      // Replace the "Fetching…" placeholder with real content
+      listEl.innerHTML = '';
+
+      if (!publicRepos.length) {
+        listEl.innerHTML = '<p class="msg">No public repositories.</p>';
+        return;
+      }
+
+      // Build a block of HTML for each repo
+      publicRepos.forEach(repo => {
+        const div = document.createElement('div');
+        div.className = 'repo';
+
+        // ── Repo header row (name + language) ──
+        const header = document.createElement('div');
+        header.className = 'repo-header';
+
+        // The repo name links to the repo on GitHub
+        const a = document.createElement('a');
+        a.className = 'repo-name';
+        a.href = repo.html_url;
+        a.target = '_blank';
+        a.rel = 'noopener'; // security: prevents the new tab accessing this page
+        a.textContent = repo.name;
+        header.appendChild(a);
+
+        // Language is optional — not all repos have one set
+        if (repo.language) {
+          const lang = document.createElement('span');
+          lang.className = 'repo-lang';
+          lang.textContent = repo.language;
+          header.appendChild(lang);
+        }
+        div.appendChild(header);
+
+        // ── Description (optional) ──
+        if (repo.description) {
+          const desc = document.createElement('p');
+          desc.className = 'repo-desc';
+          desc.textContent = repo.description;
+          div.appendChild(desc);
+        }
+
+        // ── File list (hidden until toggled) ──
+        // The <ul> starts empty and gets populated when the toggle is clicked
+        const fileList = document.createElement('ul');
+        fileList.className = 'file-list';
+
+        // ── Toggle button ──
+        // First click triggers loadFiles(), which fetches and renders the contents.
+        // After that, the onclick is replaced by a simple show/hide toggle.
+        const btn = document.createElement('button');
+        btn.className = 'toggle';
+        btn.textContent = 'show files ↓';
+        btn.onclick = () => loadFiles(repo.name, fileList, btn);
+
+        div.appendChild(btn);
+        div.appendChild(fileList);
+        listEl.appendChild(div);
+      });
+
+    } catch (e) {
+      // Top-level error — show a message if even the initial data load fails
+      listEl.innerHTML = `<p class="err">Could not load repositories: ${e.message}</p>`;
+      console.error(e);
+    }
+  }
+
+  // Kick everything off
+  init();
 </script>
 </body>
 </html>
